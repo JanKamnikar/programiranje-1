@@ -18,7 +18,21 @@
       0   6   11
 [*----------------------------------------------------------------------------*)
 
+(* type tree = Leaf | Node of (tree * int *  tree) *)
+(* type 'a tree = Leaf | Node of ('a tree * 'a * 'a tree) *)
+type 'a tree = 
+Empty
+| Node of 
+{left: 'a tree;
+value: 'a;
+right: 'a tree}
+let leaf x = Node {left = Empty; value = x; right = Empty}
 
+let test_tree = Node {
+left = Node {left = leaf 0; value=2;right=Empty};
+value = 5;
+right = Node {left= leaf 6;value = 7; right = leaf 11}
+}
 (*----------------------------------------------------------------------------*]
  Funkcija [mirror] vrne prezrcaljeno drevo. Na primeru [test_tree] torej vrne
           5
@@ -33,6 +47,9 @@
  Node (Empty, 2, Node (Empty, 0, Empty)))
 [*----------------------------------------------------------------------------*)
 
+let rec mirror = function
+| Empty ->  Empty
+| Node {left; value; right} -> Node {left = mirror right; value; right= mirror left}
 
 (*----------------------------------------------------------------------------*]
  Funkcija [height] vrne višino oz. globino drevesa, funkcija [size] pa število
@@ -44,6 +61,13 @@
  - : int = 6
 [*----------------------------------------------------------------------------*)
 
+let rec globina = function
+  | Empty -> 0
+  | Node {left; value; right} -> 1 + max (globina left) (globina right)
+
+let rec size = function
+     | Empty -> 0
+     | Node {left; right; _} -> 1 + (size left) + (size right) 
 
 (*----------------------------------------------------------------------------*]
  Funkcija [map_tree f tree] preslika drevo v novo drevo, ki vsebuje podatke
@@ -54,8 +78,9 @@
  Node (Node (Node (Empty, false, Empty), false, Empty), true,
  Node (Node (Empty, true, Empty), true, Node (Empty, true, Empty)))
 [*----------------------------------------------------------------------------*)
-
-
+let rec map_tree f = function
+| Empty -> Empty
+| Node {left; value; right} -> Node {left=map_tree f left; value= f value; right= map_tree f right}
 (*----------------------------------------------------------------------------*]
  Funkcija [list_of_tree] pretvori drevo v seznam. Vrstni red podatkov v seznamu
  naj bo takšen, da v primeru binarnega iskalnega drevesa vrne urejen seznam.
@@ -63,6 +88,9 @@
  # list_of_tree test_tree;;
  - : int list = [0; 2; 5; 6; 7; 11]
 [*----------------------------------------------------------------------------*)
+let rec list_of_tree = function
+| Empty -> []
+| Node {left; value; right} -> list_of_tree left @ [value] @ list_of_tree right
 
 
 (*----------------------------------------------------------------------------*]
@@ -72,10 +100,14 @@
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  # is_bst test_tree;;
  - : bool = true
- # test_tree |> mirror |> is_bst;;
+ # test_tree |> mirror |> is_bst;;   = is_bst(mirror(test_tree))
  - : bool = false
 [*----------------------------------------------------------------------------*)
-
+let rec is_bst tree = match tree with
+| Empty -> true 
+| Node {left; value; right} -> 
+     if (list_of_tree tree)= List.sort_uniq compare (list_of_tree tree) then true
+     else false
 
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
  V nadaljevanju predpostavljamo, da imajo dvojiška drevesa strukturo BST.
@@ -90,14 +122,26 @@
  # member 3 test_tree;;
  - : bool = false
 [*----------------------------------------------------------------------------*)
+let rec insert x t = match t with
+| Empty -> leaf x
+| Node {left; value; right} when value < x -> Node{left; value; right= insert x right}
+| Node {left; value; right} when value > x -> Node{left= insert x left; value; right}
+| Node {left; value; right} (*when value = x*) -> t
 
-
+let rec member x = function
+| Empty -> false
+| Node {left; value; right} when value < x -> member x right
+| Node {left; value; right} when value > x -> member x left
+| Node {left; value; right} (*when value = x *) -> true
 (*----------------------------------------------------------------------------*]
  Funkcija [member2] ne privzame, da je drevo bst.
  
  Opomba: Premislte kolikšna je časovna zahtevnost funkcije [member] in kolikšna
  funkcije [member2] na drevesu z n vozlišči, ki ima globino log(n). 
 [*----------------------------------------------------------------------------*)
+let rec member2 x = function
+| Empty -> false
+| Node {left; value; right} -> value = x || member2 x left || member2 x right
 
 
 (*----------------------------------------------------------------------------*]
@@ -112,6 +156,25 @@
  # pred (Node(Empty, 5, leaf 7));;
  - : int option = None
 [*----------------------------------------------------------------------------*)
+(*type 'a option = None | Some of 'a*)
+let succ = function
+| Empty -> None
+| Node {left; value; right} ->
+let rec aux acc right = match right with
+| Empty -> acc
+| Node {left; value; right} -> aux (Some value) left
+in aux None right
+
+let pred bst =
+     let rec maximal = function
+       | Empty -> None
+       | Node{value; right;_} when right = Empty-> Some value
+       | Node{left; value; right} -> maximal right
+     in
+     match bst with
+     | Empty -> None
+     | Node{left; value; right} -> maximal left
+
 
 
 (*----------------------------------------------------------------------------*]
@@ -126,7 +189,15 @@
  Node (Node (Node (Empty, 0, Empty), 2, Empty), 5,
  Node (Node (Empty, 6, Empty), 11, Empty))
 [*----------------------------------------------------------------------------*)
-
+let rec delete x tree = match tree with
+| Empty -> Empty
+| Node {left; value; right} when value < x -> Node {left; value; right= delete x right}
+| Node {left; value; right} when value > x -> Node {left = delete x left; value; right}
+| Node {left; value; right} (*when value = x *) -> 
+match succ x (Node {left; value; right}) with
+     | None ->  Empty
+     | Some 'a -> Node {left; value= 'a; right}
+      
 
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
  SLOVARJI

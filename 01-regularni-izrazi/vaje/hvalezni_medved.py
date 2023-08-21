@@ -25,8 +25,10 @@ medved. Zvrhano zibelko sladkih hrušk mi je prinesel za en sam izdrt trn"."""
 # >>> find_words(test_text, 'de')
 # {'izdere', 'debel', 'oddide', 'začudeno'}
 ###############################################################################
-
-
+import re
+def find_words(txt,niz):
+    return set( re.findall(r'\b\w*'+f'{niz}'+r'\w*\b', txt))
+    
 ###############################################################################
 # 2) Sestavite funkcijo [find_prefix], ki vrne množico vseh besed, ki se
 #    pojavijo v nizu in imajo dano predpono.
@@ -34,8 +36,9 @@ medved. Zvrhano zibelko sladkih hrušk mi je prinesel za en sam izdrt trn"."""
 # >>> find_prefix(test_text, 'zi')
 # {'zibala', 'zibel', 'zibelko'}
 ###############################################################################
-
-
+def find_prefix(txt,niz):
+    return set( re.findall(r'\b'f'{niz}'r'\w*\b', txt))
+        
 ###############################################################################
 # 3) Sestavite funkcijo [find_suffix], ki vrne množico vseh besed, ki se
 #    pojavijo v nizu in imajo dano pripono.
@@ -43,7 +46,9 @@ medved. Zvrhano zibelko sladkih hrušk mi je prinesel za en sam izdrt trn"."""
 # >>> find_suffix(test_text, 'la')
 # {'zibala', 'razveselila', 'prestrašila', 'šivala', 'opazila', 'tla'}
 ###############################################################################
-
+def find_suffix(txt,niz):
+    return set( re.findall(r'\b\w*'+ f'{niz}'+r'\b', txt) )
+    
 
 ###############################################################################
 # 4) Sestavite funkcijo [double_letters], ki sprejme niz in vrne množico vseh
@@ -52,3 +57,10 @@ medved. Zvrhano zibelko sladkih hrušk mi je prinesel za en sam izdrt trn"."""
 # >>> double_letters('A volunteer is worth twenty pressed men.')
 # {'volunteer', 'pressed'}
 ###############################################################################
+def double_letters(txt):
+    s = set()
+    for i,j in re.findall(r'(\b\w*([a-z])\2\w*\b)', txt): #flags=re.IGNORECASE
+        s.add(i)
+    return s
+print(double_letters('A volunteer is worth twenty pressed men.'))
+

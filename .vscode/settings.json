@@ -1,0 +1,6 @@
+{
+    "activestate.promptRuntimeCreation": false,
+    "ocaml.sandbox": {
+        "kind": "global"
+    }
+}

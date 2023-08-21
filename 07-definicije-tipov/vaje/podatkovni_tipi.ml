@@ -20,8 +20,10 @@
  # dollar_to_euro (Dollar 0.5);;
  - : euro = Euro 0.4305
 [*----------------------------------------------------------------------------*)
-
-
+type euro = Euro of float
+type dollar = Dollar of float
+let euro_to_dollar (Euro e) = (Dollar (e *. 1.02))
+let dollar_to_euro (Dollar d) = (Euro (d *. 0.98))
 
 (*----------------------------------------------------------------------------*]
  Definirajte tip [currency] kot en vsotni tip z konstruktorji za jen, funt
@@ -35,6 +37,11 @@
  - : currency = Pound 0.007
 [*----------------------------------------------------------------------------*)
 
+type currency = Yen of float | Pound of float| Krona of float
+let  to_pound = function
+| Yen x ->  Pound (0.5 *. x)
+| Pound x -> Pound x
+| Krona x -> Pound (5. *. x)
 
 
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
@@ -56,23 +63,36 @@
 
  Nato napišite testni primer, ki bi predstavljal "[5; true; false; 7]".
 [*----------------------------------------------------------------------------*)
+type intbool_list = 
+| Prazen_seznam
+| I of (int * intbool_list) 
+| B of bool * intbool_list
 
-
+let a = I( 5, B( true, B( false, I( 7, Prazen_seznam))))
 
 (*----------------------------------------------------------------------------*]
- Funkcija [intbool_map f_int f_bool ib_list] preslika vrednosti [ib_list] v nov
- [intbool_list] seznam, kjer na elementih uporabi primerno od funkcij [f_int]
+ Funkcija [intbool_map f_int f_bool ib_list] preslika vrednosti [ib_list, ki je tipa intbool_list]
+  v nov [intbool_list] seznam, kjer na elementih uporabi primerno od funkcij [f_int]
  oz. [f_bool].
 [*----------------------------------------------------------------------------*)
 
-let rec intbool_map = ()
+let rec intbool_map f_int f_bool = function
+| Prazen_seznam -> Prazen_seznam 
+| I(i, iblst) -> I( f_int i, intbool_map f_int f_bool iblst )
+| B(b, iblst) -> B( f_bool b, intbool_map f_int f_bool iblst )
 
 (*----------------------------------------------------------------------------*]
  Funkcija [intbool_reverse] obrne vrstni red elementov [intbool_list] seznama.
  Funkcija je repno rekurzivna.
 [*----------------------------------------------------------------------------*)
 
-let rec intbool_reverse = ()
+let intbool_reverse iblist =
+let rec gej aux = function
+| Prazen_seznam -> aux
+| I(i, iblst) -> gej (I(i, aux)) iblst
+| B(b, iblst) -> gej (B(b, aux)) iblst
+in gej Prazen_seznam iblist
+
 
 (*----------------------------------------------------------------------------*]
  Funkcija [intbool_separate ib_list] loči vrednosti [ib_list] v par [list]
@@ -80,7 +100,12 @@ let rec intbool_reverse = ()
  vrednosti. Funkcija je repno rekurzivna in ohranja vrstni red elementov.
 [*----------------------------------------------------------------------------*)
 
-let rec intbool_separate = ()
+let intbool_separate iblist = 
+let rec gej iaux baux = function
+| Prazen_seznam -> (iaux,baux)
+| I(i, iblst) -> gej (iaux @ [i]) baux iblst
+| B(b, iblst) -> gej iaux (baux @ [b]) iblst
+in gej [] [] iblist
 
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
  Določeni ste bili za vzdrževalca baze podatkov za svetovno priznano čarodejsko
@@ -97,8 +122,8 @@ let rec intbool_separate = ()
  raziskovanje oz. historian, teacher in researcher. Definirajte tip
  [specialisation], ki loči med temi zaposlitvami.
 [*----------------------------------------------------------------------------*)
-
-
+type magic = Fire|Frost|Arcane
+type specialisation = Historian| Teacher | Researcher
 
 (*----------------------------------------------------------------------------*]
  Vsak od čarodejev začne kot začetnik, nato na neki točki postane študent,
@@ -114,9 +139,13 @@ let rec intbool_separate = ()
  # professor;;
  - : wizard = {name = "Matija"; status = Employed (Fire, Teacher)}
 [*----------------------------------------------------------------------------*)
+type status = Newbie
+| Student of magic * int
+| Employed of magic * specialisation
 
+type wizard = {name: string; status : status}
 
-
+let professor = {name = "Matija"; status = Employed (Fire, Teacher)}
 (*----------------------------------------------------------------------------*]
  Želimo prešteti koliko uporabnikov posamezne od vrst magije imamo na akademiji.
  Definirajte zapisni tip [magic_counter], ki v posameznem polju hrani število
@@ -127,6 +156,12 @@ let rec intbool_separate = ()
  # update {fire = 1; frost = 1; arcane = 1} Arcane;;
  - : magic_counter = {fire = 1; frost = 1; arcane = 2}
 [*----------------------------------------------------------------------------*)
+type magic_counter = {fire : int; frost : int; arcane : int}
+let  update objekt carovnija = match carovnija with
+| Fire -> {objekt with fire = objekt.fire + 1}
+| Frost ->{objekt with frost = objekt.frost + 1}
+| Arcane ->{objekt with arcane = objekt.arcane + 1}
+
 
 
 
@@ -138,7 +173,15 @@ let rec intbool_separate = ()
  - : magic_counter = {fire = 3; frost = 0; arcane = 0}
 [*----------------------------------------------------------------------------*)
 
-let rec count_magic = ()
+let count_magic wizards =
+let rec countem aux = function
+| []-> aux
+| {name; status} :: rest_of_em ->
+ match status with
+| Newbie -> countem aux rest_of_em
+| Student (magic,_) -> countem (update aux magic) rest_of_em
+| Employed (magic,_) -> countem (update aux magic) rest_of_em
+in countem {fire = 0; frost = 0; arcane = 0} wizards
 
 (*----------------------------------------------------------------------------*]
  Želimo poiskati primernega kandidata za delovni razpis. Študent lahko postane
@@ -154,4 +197,19 @@ let rec count_magic = ()
  - : string option = Some "Jaina"
 [*----------------------------------------------------------------------------*)
 
-let rec find_candidate = ()
+
+type 'a moznost = Nic | Nekaj of 'a
+type specializacija = Historian | Researcher | Teacher
+
+let rec find_candidate magicc specialisation = function
+| [] -> Nic
+| {name; status} :: rest_of_em ->
+ match status with
+| Newbie -> find_candidate magicc specialisation rest_of_em
+| Employed (magic,_) -> if magic = magicc then (Nekaj name) else find_candidate magicc specialisation rest_of_em
+| Student (magic,leta) -> if magic = magicc then
+ match specialisation with 
+ | Historian -> if leta > 2 then (Nekaj name) else find_candidate magicc specialisation rest_of_em
+ | Researcher -> if leta > 3 then (Nekaj name) else find_candidate magicc specialisation rest_of_em
+ | Teacher -> if leta > 4 then (Nekaj name) else find_candidate magicc specialisation rest_of_em
+ else find_candidate magicc specialisation rest_of_em

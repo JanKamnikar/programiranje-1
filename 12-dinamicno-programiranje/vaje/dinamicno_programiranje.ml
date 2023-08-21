@@ -20,6 +20,44 @@ let test_matrix =
   [| [| 1 ; 2 ; 0 |];
      [| 2 ; 4 ; 5 |];
      [| 7 ; 0 ; 1 |] |]
+(*let max_cheese cheese_matrix = 
+   let rec aux acc i j =
+      if i = Array.length cheese_matrix -1 && j < Array.length (cheese_matrix.(0)) then aux (cheese_matrix.(i).(j)) (i) (j + 1)
+      else if j = Array.length (cheese_matrix.(0)) -1 && i < Array.length cheese_matrix then aux (cheese_matrix.(i).(j)) (i+1) (j)
+         
+      else if i < Array.length cheese_matrix -1  && j < Array.length (cheese_matrix.(0))-1  then (
+         Printf.printf "porva i: %d j: %d\n" i j;
+         acc + max (aux (cheese_matrix.(i).(j)) (i+1) (j)) (aux (cheese_matrix.(i).(j)) (i) (j+1)))
+      else if i < Array.length cheese_matrix   then (
+         Printf.printf "druga i: %d j: %d\n" i j;
+         acc + aux (cheese_matrix.(i).(j)) (i+1) (j))
+      else if j < Array.length (cheese_matrix.(0))  then (
+         Printf.printf "tretja i: %d j: %d\n" i j;
+         acc +  aux (cheese_matrix.(i).(j)) (i) (j+1)
+      )
+      else 
+         acc
+      in aux 0 0 0*)
+
+let max_cheese cheese_matrix =
+   let dimx = Array.length cheese_matrix.(0) in
+   let dimy = Array.length cheese_matrix in
+   let rec best_cheese y x =
+      let current = cheese_matrix.(y).(x) in
+      let best_right = if (x+1) = dimx then 0 else best_cheese y (x+1) in
+      let best_down = if (y+1) = dimy then 0 else best_cheese (y+1) x in
+      current + max best_right best_down
+   in
+   best_cheese 0 0
+
+
+
+
+
+
+
+
+
 
 (*----------------------------------------------------------------------------*]
  Poleg količine sira, ki jo miška lahko poje, jo zanima tudi točna pot, ki naj
@@ -37,7 +75,16 @@ let test_matrix =
 [*----------------------------------------------------------------------------*)
 
 type mouse_direction = Down | Right
-
+let max_cheese cheese_matrix =
+   let dimx = Array.length cheese_matrix.(0) in
+   let dimy = Array.length cheese_matrix in
+   let rec best_cheese y x =
+      let current = cheese_matrix.(y).(x) in
+      let best_right = if (x+1) = dimx then 0 else best_cheese y (x+1) in
+      let best_down = if (y+1) = dimy then 0 else best_cheese (y+1) x in
+      current + max best_right best_down
+   in
+   best_cheese 0 0
 
 (*----------------------------------------------------------------------------*]
  Rešujemo problem sestavljanja alternirajoče obarvanih stolpov. Imamo štiri
@@ -55,8 +102,29 @@ type mouse_direction = Down | Right
  - : int = 35
 [*----------------------------------------------------------------------------*)
 
+(*let alternating_towers height=
+   let rec redbottom h =
+      if h = 0 then 1
+      else if h < 0 then 0
+      else bluebottom (h -1) + bluebottom (h -2)
+   and bluebottom h =
+      if h = 0 then 1
+      else if h < 0 then 0
+      else redbottom (h-2) + redbottom (h-3) 
+   in
+   redbottom height + bluebottom height*)
 
-
+   let alternating_towers height=
+   let rec redbottom h =
+      if h < 0 then 0        
+      else if h <= 2 then 1 
+      else bluebottom (h -1) + bluebottom (h -2)
+   and bluebottom h =
+      if h <= 1 then 0     
+      else if h = 2 then 1 
+      else redbottom (h-2) + redbottom (h-3) 
+   in
+   redbottom height + bluebottom height
 (*----------------------------------------------------------------------------*]
  Izračunali smo število stolpov, a naše vrle gradbince sedaj zanima točna
  konfiguracija. Da ne pride do napak pri sestavljanju, bomo stolpe predstavili

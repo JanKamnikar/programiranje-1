@@ -82,7 +82,34 @@
 #     [1, 1, 2, 3, 3, 4, 5, 5, 6, 7, 7, 10]
 #
 ###############################################################################
+def merge(target, l1, l2):
+    assert(len(target)== len(l1) + len(l2))# ce to ne velja naj se koda samo sesuje
+    i1=i2=j=0
+    while i1 < len(l1) and i2 < len(l2):
+        if l1[i1] <= l2[i2]:
+            target[j] = l1[i1]
+            i1 += 1
+        else:
+            target[j] = l2[i2]
+            i2 += 1
+        j+=1
+    if len(l2) != i2: # da ne rabis zapisat za obe razlicni while zanki za rep
+        l1 = l2
+        i1 = i2
+    while i1 < len(l1):
+        target[j] = l1[i1]
+        i1 += 1
+        j += 1
+def mergesort(l):
+    if len(l) <= 1:
+        return # == return None
+    levi = l[:len(l)//2]
+    desni = l[len(l)//2:]
 
+    mergesort(levi) # samo spremeni, nič ne vrača
+    mergesort(desni)
+
+    merge(l,levi,desni)
 
 ###############################################################################
 # Tabelo želimo urediti z zlivanjem (merge sort). Tabelo razdelimo na polovici,
@@ -99,3 +126,34 @@
 #     >>> a
 #     [2, 3, 4, 5, 10, 11, 15, 17, 18]
 ###############################################################################
+def zlij(x,y): # največ len(x) + len(y) primerjanj moraš narediti
+    p = []
+    i,j = 0,0
+    while i < len(x) and j < len(y):
+            if x[i] < y[j]:
+                p.append(x[i])
+                i += 1
+            else:
+                p.append(y[j])
+                j += 1
+    if i == len(x):
+        return p + y[j:]
+    else:
+        return p + x[i:]
+def mergesort(a):
+    prvi = a[0]
+    lev, des = [], []
+    for i in range(len(a[1:])):
+        if a[1:][i] < prvi:
+            lev.append(a[1:][i])
+        else:
+            des.append(a[1:][i])
+    pass
+def mergesort(a):
+    if len(a) <= 1:
+        return # == return None
+    levi = a[:len(a)//2]
+    desni = a[len(a)//2:]
+    mergesort(levi) # samo spremeni, nič ne vrača
+    mergesort(desni)
+    merge(levi,desni)

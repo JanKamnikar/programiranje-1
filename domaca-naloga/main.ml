@@ -25,7 +25,20 @@ let find_and_display_solution (problem : Model.problem) =
   display_solution response;
   Printf.printf "Čas reševanja: %f s.\n%!" elapsed_time
 
-let () =
+
+;;  Printexc.record_backtrace true;;
+
+
+(*  Prevajaj z:
+   
+C:\OCaml64\usr\local\bin\ocaml-env.exe exec -- C:\OCaml64\home\Uporabnik\.opam\4.14.0+mingw64c\bin\ocamlopt.exe -g model.ml solver.ml main.ml -o sudoku.exe
+
+*)
+
+
+
+
+(*let () =
   (* Če se program sesuje, nam to izpiše klicni sklad. *)
   Printexc.record_backtrace true;
   (* Tabela sistemskih argumentov vsebuje ime klicanega programa ter argumente, ki mu sledijo *)
@@ -38,11 +51,11 @@ let () =
   |> List.map read_problem
   (* Probleme zaporedoma rešimo *)
   |> List.iter find_and_display_solution
-
+*)
 (* Če domačo nalogo rešujete prek spletnega vmesnika, ki ne podpira branja datotek,
    lahko delovanje preizkušate prek spodnjega programa. *)
 
-(* let () = "
+let () = "
 ┏━━━┯━━━┯━━━┓
 ┃483│921│657┃
 ┃967│3 5│821┃
@@ -57,4 +70,4 @@ let () =
 ┃695│417│382┃
 ┗━━━┷━━━┷━━━┛"
   |> Model.problem_of_string
-  |> find_and_display_solution *)
+  |> find_and_display_solution 
