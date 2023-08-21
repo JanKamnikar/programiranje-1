@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+# Sudoku
+=======
 # Domača naloga
 
 Domača naloga od vas zahteva da napišete program, ki reši uganko [sudoku](https://sl.wikipedia.org/wiki/Sudoku). Osnovno ogrodje smo vam že pripravili, samo pa morate dokončati nekaj manjkajočih delov in izboljšati učinkovitost reševanja. Za več točk se od vas pričakuje, da boste nekatere že pripravljene funkcije popravili in dodali zmožnost reševanja nestandardnih sudokujev. Poleg pravilnega in učinkovitega delovanja se pričakuje, da bo programska koda berljiva. To ne pomeni samo tega, da so spremenljivke ustrezno poimenovane, koda lepo zamaknjena, zahtevnejši deli pa pokomentirani, temveč tudi to, da je program napišete v duhu funkcijskega programiranja.
@@ -124,3 +127,4 @@ Vhodni podatki se začnejo z običajno mrežo kot pri obicajnih sudokujih, čemu
 Pri branju vse vrstice, ki se začnejo z `#`, ignorirajte kot komentarje.
 
 **NALOGO MORATE REŠEVATI SAMOSTOJNO. ČE NE VESTE, ALI DOLOČENA STVAR POMENI SODELOVANJE, RAJE VPRAŠAJTE!**
+>>>>>>> b1d4ea5 (Initial commit)
