@@ -17,7 +17,7 @@ let square x = x * x
  - : bool = false
 [*----------------------------------------------------------------------------*)
 
-let middle_of_triple (_,x,_) = x
+let rec middle_of_triple = ()
 
 (*----------------------------------------------------------------------------*]
  Funkcija [starting_element] vrne prvi element danega seznama. V primeru
@@ -27,9 +27,7 @@ let middle_of_triple (_,x,_) = x
  - : int = 1
 [*----------------------------------------------------------------------------*)
 
-let starting_element = function
-| a :: _ -> a
-| [] -> failwith "Napaka"
+let rec starting_element = ()
 
 (*----------------------------------------------------------------------------*]
  Funkcija [multiply] zmnoži vse elemente seznama. V primeru praznega seznama
@@ -137,10 +135,7 @@ else (let list1, list2 = divide (k-1) xs in
  - : int list = [3; 4; 5; 1; 2]
 [*----------------------------------------------------------------------------*)
 
-let rec rotate n = function
-| a::xs -> if n = 0 then a::xs else rotate (n-1) (xs @ [a])
-| [] -> []
-
+let rec rotate = ()
 
 (*----------------------------------------------------------------------------*]
  Funkcija [remove x list] iz seznama izbriše vse pojavitve elementa [x].
@@ -163,12 +158,8 @@ let rec remove x = function
  - : bool = false
 [*----------------------------------------------------------------------------*)
 
-let is_palindrome l = 
-let rec obrni l aux = match l with
-| a :: xs -> obrni xs (aux @ [a])
-| [] -> aux
-in
-l = obrni l []
+let rec is_palindrome = ()
+
 (*----------------------------------------------------------------------------*]
  Funkcija [max_on_components] sprejme dva seznama in vrne nov seznam, katerega
  elementi so večji od istoležnih elementov na danih seznamih. Skupni seznam ima
@@ -196,9 +187,4 @@ in skupni l d []
  - : int = 10
 [*----------------------------------------------------------------------------*)
 
-let second_largest l = 
-let rec largest = function
-    | [] -> failwith "List is too short."
-	  | x :: [] -> x
-	  | x :: xs -> max x (largest xs)
-in largest (remove (largest l) l)
+let rec second_largest = ()

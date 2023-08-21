@@ -142,9 +142,27 @@ let index_min a lower upper =
 
 (*----------------------------------------------------------------------------*]
  Funkcija [selection_sort_array] implementira urejanje z izbiranjem na mestu. 
+[*----------------------------------------------------------------------------*)
+
+
+(*----------------------------------------------------------------------------*]
+ Funkcija [min_and_rest list] vrne par [Some (z, list')] tako da je [z]
+ najmanjši element v [list] in seznam [list'] enak [list] z odstranjeno prvo
+ pojavitvijo elementa [z]. V primeru praznega seznama vrne [None]. 
+[*----------------------------------------------------------------------------*)
+
+(*----------------------------------------------------------------------------*]
+ Funkcija [selection_sort] je implementacija zgoraj opisanega algoritma.
+ Namig: Uporabi [min_and_rest] iz prejšnje naloge.
+[*----------------------------------------------------------------------------*)
+
+
+(*----------------------------------------------------------------------------*]
+ Funkcija [randlist len max] generira seznam dolžine [len] z naključnimi
+ celimi števili med 0 in [max].
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- Namig: Za testiranje uporabi funkciji [Array.of_list] in [Array.to_list]
- skupaj z [randlist].
+ # let l = randlist 10 10 ;;
+ val l : int list = [0; 1; 0; 4; 0; 9; 1; 2; 5; 4]
 [*----------------------------------------------------------------------------*)
 let selection_sort_array a =
   let index_end = Array.length a-1 in
